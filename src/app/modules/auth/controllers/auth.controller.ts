@@ -1,5 +1,17 @@
-import { Body, Controller, HttpCode, Inject, Post, Res } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { Response, Request } from 'express';
 import { CreateUserInterface } from '../../user/interfaces/create-user.interface';
 import { AuthService } from '../services/auth.service';
 import { ZodValidationPipe } from 'src/core/pipes/zodValidation.pipe';
@@ -12,6 +24,9 @@ import {
   LoginUserValidationSchemaType,
 } from '../validation/login-user.schema';
 import { CookiesConstants } from '../constants';
+import { JwtBodyInterface } from '../interfaces/jwt-body.interface';
+import { AuthenticatedUserRequestInterInterface } from '../interfaces/authenticated-user-request.interface';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -51,5 +66,34 @@ export class AuthController {
       });
     }
     return { accessToken: tokens.accessToken };
+  }
+
+  // logout
+  @Post('logout')
+  @UseGuards(AuthGuard)
+  logout(
+    @Req() req: AuthenticatedUserRequestInterInterface,
+    @Res() res: Response,
+  ) {
+    const user: JwtBodyInterface = req?.user;
+    if (!user)
+      throw new HttpException('Not authenticated', HttpStatus.UNAUTHORIZED);
+    // delete the cookies
+    res.clearCookie(CookiesConstants.accessToken, { httpOnly: true });
+    res.clearCookie(CookiesConstants.refreshToken, { httpOnly: true });
+    throw new HttpException('unauthenticated', HttpStatus.OK);
+  }
+
+  // is authenticated
+  @Get('is-authenticated')
+  @UseGuards(AuthGuard)
+  IsAuthenticated(@Req() req: AuthenticatedUserRequestInterInterface): {
+    authenticated: boolean;
+    data: JwtBodyInterface;
+  } {
+    const user: JwtBodyInterface = req?.user;
+    if (!user)
+      throw new HttpException('Not authenticated', HttpStatus.UNAUTHORIZED);
+    return { authenticated: true, data: user };
   }
 }
