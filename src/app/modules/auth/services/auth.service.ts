@@ -67,13 +67,33 @@ export class AuthService {
     }
   }
 
-  // Private Methods
+  // Verify Access token
+  verifyAccessToken(token: string): JwtBodyInterface | undefined {
+    try {
+      const res = this.jwtService.verify(token);
+
+      return res as JwtBodyInterface;
+    } catch {
+      return undefined;
+    }
+  }
+
+  // Verify Refresh token
+  verifyRefreshToken(token: string): JwtBodyInterface | undefined {
+    try {
+      const res = this.jwtService.verify(token);
+
+      return res as JwtBodyInterface;
+    } catch {
+      return undefined;
+    }
+  }
 
   // Generate access token
-  private generateAccessToken(body: JwtBodyInterface): string {
+  generateAccessToken(body: JwtBodyInterface): string {
     try {
       const token = this.jwtService.sign(body, {
-        expiresIn: '1h',
+        expiresIn: '10m',
       });
 
       return token;
@@ -83,7 +103,7 @@ export class AuthService {
   }
 
   // generate refresh token
-  private generateRefreshToken(body: JwtBodyInterface): string {
+  generateRefreshToken(body: JwtBodyInterface): string {
     try {
       const token = this.jwtService.sign(body, {
         expiresIn: '2days',
