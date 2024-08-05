@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { AuthUserRole } from 'src/core/interfaces/auth.type';
 // User Interface
 
@@ -23,4 +24,8 @@ export interface UserInterface {
 
   createdAt: string;
   updatedAt: string;
+}
+
+export interface UserSchemaDocumentType extends UserInterface, Document {
+  _id: Types.ObjectId;
 }
