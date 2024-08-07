@@ -39,7 +39,6 @@ export class AuthGoogleGuard extends AuthGuard('google') {
         });
         return activate;
       }
-      return;
     } else {
       throw new HttpException('Not authenticated', HttpStatus.UNAUTHORIZED);
     }
