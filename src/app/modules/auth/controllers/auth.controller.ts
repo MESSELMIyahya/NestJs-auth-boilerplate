@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Inject,
   Post,
+  Redirect,
   Req,
   Res,
   UseGuards,
@@ -27,6 +28,7 @@ import { CookiesConstants } from '../constants';
 import { JwtBodyInterface } from '../interfaces/jwt-body.interface';
 import { AuthenticatedUserRequestInterInterface } from '../interfaces/authenticated-user-request.interface';
 import { AuthGuard } from '../guards/auth.guard';
+import { AuthGoogleGuard } from '../guards/auth.google.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -95,5 +97,23 @@ export class AuthController {
     if (!user)
       throw new HttpException('Not authenticated', HttpStatus.UNAUTHORIZED);
     return { authenticated: true, data: user };
+  }
+
+
+  // Google auth 
+
+  // login 
+  @Get('google/login')
+  @UseGuards(AuthGoogleGuard)
+  googleLogin(){
+    return "Your in the login";
+  }
+  
+  // redirect url
+  @Get('google/redirect')
+  @UseGuards(AuthGoogleGuard)
+  @Redirect('/auth/is-authenticated')
+  googleRedirect(){
+    return ''
   }
 }
