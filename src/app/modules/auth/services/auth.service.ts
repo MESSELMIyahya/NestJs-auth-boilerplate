@@ -22,8 +22,14 @@ export class AuthService {
   ) {}
 
   // Register
-  async Register(user: CreateUserInterface): Promise<CreateUserInterface> {
-    const newUser = await this.userService.createUser(user);
+  async Register(
+    user: Omit<CreateUserInterface, 'oauth' | 'oauthProvider'>,
+  ): Promise<CreateUserInterface> {
+    const newUser = await this.userService.createUser({
+      ...user,
+      oauth: false,
+      oauthProvider: '',
+    });
     return newUser;
   }
 
@@ -48,7 +54,45 @@ export class AuthService {
     try {
       // generating the tokens
       const jwtBody: JwtBodyInterface = {
-        id: user._id as never,
+        id: user._id.toString(),
+        role: user.access.role,
+        email: user.profileInfo.email,
+        username: user.profileInfo.username,
+        pic: user.profileInfo.pic,
+      };
+
+      const accessToken = await this.generateAccessToken(jwtBody);
+      const refreshToken = await this.generateRefreshToken(jwtBody);
+
+      return {
+        accessToken,
+        refreshToken,
+      };
+    } catch {
+      throw new HttpException('Server Error', HttpStatus.SERVICE_UNAVAILABLE);
+    }
+  }
+
+  // login oauth
+  async LoginOAuth(email: string): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
+    // verifying the user
+    const user = await this.userService.getUserByEmail(email);
+    if (!user) {
+      throw new HttpException('No user with this email', HttpStatus.NOT_FOUND);
+    }
+
+    // if the user isn't oauth
+    if (!user.access.oauth) {
+      throw new HttpException('No user with this email', HttpStatus.NOT_FOUND);
+    }
+    
+    try {
+      // generating the tokens
+      const jwtBody: JwtBodyInterface = {
+        id: user._id.toString(),
         role: user.access.role,
         email: user.profileInfo.email,
         username: user.profileInfo.username,
