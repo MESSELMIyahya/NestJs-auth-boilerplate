@@ -37,10 +37,10 @@ export const UserSchema = new Schema<UserInterface>(
         type: Boolean,
         default: false,
       },
-      oauthProvider:{
+      oauthProvider: {
         required: false,
         type: String,
-        enum:['google',''],
+        enum: ['google', ''],
         default: '',
       },
       canPost: {

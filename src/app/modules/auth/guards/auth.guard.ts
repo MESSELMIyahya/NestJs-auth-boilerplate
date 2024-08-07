@@ -23,7 +23,9 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const req: AuthenticatedUserRequestInterInterface = context.switchToHttp().getRequest();
+    const req: AuthenticatedUserRequestInterInterface = context
+      .switchToHttp()
+      .getRequest();
     const res: Response = context.switchToHttp().getResponse();
 
     // get the tokens from the req's cookies
@@ -41,15 +43,14 @@ export class AuthGuard implements CanActivate {
     if (!verify_accessToken && verify_refreshToken) {
       // generate new access token
       const body: JwtBodyInterface = {
-        id: verify_refreshToken.id ,
+        id: verify_refreshToken.id,
         role: verify_refreshToken.role,
         email: verify_refreshToken.email,
         username: verify_refreshToken.username,
         pic: verify_refreshToken.pic,
       };
 
-      const newAccessToken =
-        this.authService.generateAccessToken(body);
+      const newAccessToken = this.authService.generateAccessToken(body);
       // setting the cookies
       res.cookie(CookiesConstants.accessToken, newAccessToken, {
         httpOnly: true,

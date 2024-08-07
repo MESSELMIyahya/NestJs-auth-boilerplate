@@ -99,21 +99,20 @@ export class AuthController {
     return { authenticated: true, data: user };
   }
 
+  // Google auth
 
-  // Google auth 
-
-  // login 
+  // login
   @Get('google/login')
   @UseGuards(AuthGoogleGuard)
-  googleLogin(){
-    return "Your in the login";
+  googleLogin() {
+    return 'Your in the login';
   }
-  
+
   // redirect url
   @Get('google/redirect')
   @UseGuards(AuthGoogleGuard)
   @Redirect('/auth/is-authenticated')
-  googleRedirect(){
-    return ''
+  googleRedirect() {
+    return '';
   }
 }

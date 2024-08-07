@@ -1,10 +1,5 @@
 import { PassportStrategy } from '@nestjs/passport';
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { UserService } from '../../user/services/user.service';
 import { JwtBodyInterface } from '../interfaces/jwt-body.interface';
@@ -53,7 +48,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       const createdUser = await this.userService.createUser({
         email,
         fullName: profile.displayName,
-        username: profile._json.name || `${profile.name.givenName} ${profile.name.familyName}`,
+        username:
+          profile._json.name ||
+          `${profile.name.givenName} ${profile.name.familyName}`,
         pic: profile.photos[0].value,
         oauth: true,
         oauthProvider: 'google',
@@ -71,9 +68,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       };
 
       return next(null, userObj);
-    } catch (err){
+    } catch (err) {
       return next(
-        new HttpException("Server Err", HttpStatus.SERVICE_UNAVAILABLE),
+        new HttpException('Server Err', HttpStatus.SERVICE_UNAVAILABLE),
         null,
       );
     }

@@ -16,8 +16,8 @@ export interface UserInterface {
     role: AuthUserRole;
     canPost: boolean;
     password: string;
-    oauth:boolean;
-    oauthProvider?:'google'|null
+    oauth: boolean;
+    oauthProvider?: 'google' | null;
     verified: boolean;
   };
 
