@@ -22,20 +22,22 @@ export class UserService {
     }
     try {
       // encrypting the password
-      const encryptedPassword = await hash(user.password, 10);
+      const encryptedPassword = user.oauth ? '' : await hash(user.password, 10);
       // the user model
       const newUser = new this.UserModel({
         profileInfo: {
           username: user.username,
           email: user.email,
           fullName: user.fullName,
-          pic: '',
+          pic: user.pic || '',
         },
         access: {
+          oauth: user.oauth,
+          oauthProvider: user.oauthProvider || '',
           role: 'User',
-          password: encryptedPassword,
           canPost: false,
           verified: false,
+          ...{ ...(!user.oauth ? { password: encryptedPassword } : {}) },
         },
         courses: [],
         postedCourses: [],
@@ -47,7 +49,10 @@ export class UserService {
         username: res.profileInfo.username,
         email: res.profileInfo.email,
         fullName: res.profileInfo.fullName,
+        pic: res.profileInfo.pic,
         password: res.access.password,
+        oauth: res.access.oauth,
+        oauthProvider: res.access.oauthProvider,
       };
     } catch (err) {
       throw new HttpException('Server Error', HttpStatus.INTERNAL_SERVER_ERROR);

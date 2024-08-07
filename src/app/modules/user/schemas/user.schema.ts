@@ -32,13 +32,24 @@ export const UserSchema = new Schema<UserInterface>(
         enum: ['Admin', 'User', 'Poster'],
         default: 'User',
       },
+      oauth: {
+        required: true,
+        type: Boolean,
+        default: false,
+      },
+      oauthProvider:{
+        required: false,
+        type: String,
+        enum:['google',''],
+        default: '',
+      },
       canPost: {
         required: true,
         type: Boolean,
         default: false,
       },
       password: {
-        required: true,
+        required: false,
         type: String,
         minlength: 8,
       },
