@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import {
   CanActivate,
   ExecutionContext,
@@ -8,16 +8,16 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { CookiesConstants } from '../constants';
-import { AuthService } from '../services/auth.service';
 import { AuthenticatedUserRequestInterInterface } from '../interfaces/authenticated-user-request.interface';
-import { JwtBodyInterface } from '../interfaces/jwt-body.interface';
+import { JwtBodyInterface } from '../../jwt/interfaces/jwt-body.interface';
+import { CookiesConstants } from '../../jwt/constants';
+import { JwtService } from '../../jwt/services/jwt.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    @Inject(AuthService)
-    private readonly authService: AuthService,
+    @Inject(JwtService)
+    private readonly JwtService: JwtService,
   ) {}
 
   canActivate(
@@ -36,9 +36,9 @@ export class AuthGuard implements CanActivate {
       throw new HttpException('Not authenticated', HttpStatus.UNAUTHORIZED);
 
     // verify the access token
-    const verify_accessToken = this.authService.verifyAccessToken(accessToken);
+    const verify_accessToken = this.JwtService.verifyAccessToken(accessToken);
     const verify_refreshToken =
-      this.authService.verifyRefreshToken(refreshToken);
+      this.JwtService.verifyRefreshToken(refreshToken);
     // if the access expired and the refresh token is valid
     if (!verify_accessToken && verify_refreshToken) {
       // generate new access token
@@ -50,7 +50,7 @@ export class AuthGuard implements CanActivate {
         pic: verify_refreshToken.pic,
       };
 
-      const newAccessToken = this.authService.generateAccessToken(body);
+      const newAccessToken = this.JwtService.generateAccessToken(body);
       // setting the cookies
       res.cookie(CookiesConstants.accessToken, newAccessToken, {
         httpOnly: true,
