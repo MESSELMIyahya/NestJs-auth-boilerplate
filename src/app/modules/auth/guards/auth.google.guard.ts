@@ -9,7 +9,7 @@ import { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticatedUserRequestInterInterface } from '../interfaces/authenticated-user-request.interface';
 import { AuthService } from '../services/auth.service';
-import { CookiesConstants } from '../constants';
+import { CookiesConstants } from '../../jwt/constants';
 
 @Injectable()
 export class AuthGoogleGuard extends AuthGuard('google') {

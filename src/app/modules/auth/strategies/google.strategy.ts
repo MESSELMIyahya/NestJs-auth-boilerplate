@@ -2,7 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Profile, Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { UserService } from '../../user/services/user.service';
-import { JwtBodyInterface } from '../interfaces/jwt-body.interface';
+import { JwtBodyInterface } from '../../jwt/interfaces/jwt-body.interface';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {

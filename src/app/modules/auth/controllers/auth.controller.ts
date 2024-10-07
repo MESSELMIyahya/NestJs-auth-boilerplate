@@ -24,11 +24,11 @@ import {
   LoginUserValidationSchema,
   LoginUserValidationSchemaType,
 } from '../validation/login-user.schema';
-import { CookiesConstants } from '../constants';
-import { JwtBodyInterface } from '../interfaces/jwt-body.interface';
+import { JwtBodyInterface } from '../../jwt/interfaces/jwt-body.interface';
 import { AuthenticatedUserRequestInterInterface } from '../interfaces/authenticated-user-request.interface';
 import { AuthGuard } from '../guards/auth.guard';
 import { AuthGoogleGuard } from '../guards/auth.google.guard';
+import { CookiesConstants } from '../../jwt/constants';
 
 @Controller('auth')
 export class AuthController {

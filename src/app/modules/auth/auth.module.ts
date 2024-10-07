@@ -5,10 +5,10 @@ import { UserSchema } from '../user/schemas/user.schema';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { AuthGuard } from './guards/auth.guard';
+import { JwtService } from '../jwt/services/jwt.service';
+import { JwtModule } from '../jwt/jwt.module';
 
 @Module({
   imports: [
@@ -18,15 +18,11 @@ import { AuthGuard } from './guards/auth.guard';
         schema: UserSchema,
       },
     ]),
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '2days' },
-    }),
     UserModule,
+    JwtModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, GoogleStrategy,AuthGuard],
-  exports:[AuthService]
+  providers: [JwtService, AuthService, UserService, GoogleStrategy, AuthGuard],
+  exports: [AuthService],
 })
 export class AuthModule {}

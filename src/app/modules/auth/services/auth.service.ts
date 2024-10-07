@@ -5,9 +5,9 @@ import { UserInterface } from '../../user/interfaces/user.interface';
 import { UserService } from '../../user/services/user.service';
 import { CreateUserInterface } from '../../user/interfaces/create-user.interface';
 import { LogicUserInterface } from '../interfaces/login-user.interface';
-import { JwtService } from '@nestjs/jwt';
-import { JwtBodyInterface } from '../interfaces/jwt-body.interface';
+import { JwtBodyInterface } from '../../jwt/interfaces/jwt-body.interface';
 import { compare } from 'bcrypt';
+import { JwtService } from '../../jwt/services/jwt.service';
 
 @Injectable()
 export class AuthService {
@@ -61,8 +61,8 @@ export class AuthService {
         pic: user.profileInfo.pic,
       };
 
-      const accessToken = await this.generateAccessToken(jwtBody);
-      const refreshToken = await this.generateRefreshToken(jwtBody);
+      const accessToken = await this.jwtService.generateAccessToken(jwtBody);
+      const refreshToken = await this.jwtService.generateRefreshToken(jwtBody);
 
       return {
         accessToken,
@@ -88,7 +88,7 @@ export class AuthService {
     if (!user.access.oauth) {
       throw new HttpException('No user with this email', HttpStatus.NOT_FOUND);
     }
-    
+
     try {
       // generating the tokens
       const jwtBody: JwtBodyInterface = {
@@ -99,8 +99,8 @@ export class AuthService {
         pic: user.profileInfo.pic,
       };
 
-      const accessToken = await this.generateAccessToken(jwtBody);
-      const refreshToken = await this.generateRefreshToken(jwtBody);
+      const accessToken = await this.jwtService.generateAccessToken(jwtBody);
+      const refreshToken = await this.jwtService.generateRefreshToken(jwtBody);
 
       return {
         accessToken,
@@ -108,54 +108,6 @@ export class AuthService {
       };
     } catch {
       throw new HttpException('Server Error', HttpStatus.SERVICE_UNAVAILABLE);
-    }
-  }
-
-  // Verify Access token
-  verifyAccessToken(token: string): JwtBodyInterface | undefined {
-    try {
-      const res = this.jwtService.verify(token);
-
-      return res as JwtBodyInterface;
-    } catch {
-      return undefined;
-    }
-  }
-
-  // Verify Refresh token
-  verifyRefreshToken(token: string): JwtBodyInterface | undefined {
-    try {
-      const res = this.jwtService.verify(token);
-
-      return res as JwtBodyInterface;
-    } catch {
-      return undefined;
-    }
-  }
-
-  // Generate access token
-  generateAccessToken(body: JwtBodyInterface): string {
-    try {
-      const token = this.jwtService.sign(body, {
-        expiresIn: '10m',
-      });
-
-      return token;
-    } catch {
-      throw new HttpException('Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  // generate refresh token
-  generateRefreshToken(body: JwtBodyInterface): string {
-    try {
-      const token = this.jwtService.sign(body, {
-        expiresIn: '2days',
-      });
-
-      return token;
-    } catch {
-      throw new HttpException('Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
