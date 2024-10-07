@@ -6,6 +6,7 @@ import { CoreModule } from 'src/core/core.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       },
     }),
     CoreModule,
+    JwtModule,
     UserModule,
     AuthModule,
   ],
